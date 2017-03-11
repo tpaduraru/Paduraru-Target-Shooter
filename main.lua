@@ -78,8 +78,20 @@ end
 
 -- whenever the bullet goes off the screen, delete itself and update the score.
 function bulletMiss( obj )
-	obj:removeSelf( )
+	obj:removeSelf( ) -- deletes image
+	bullets[1]:removeSelf( ) -- deletes bullet from group
+	obj = nil
+
 	score.update(-1)
+	--print("bullet removed + # of misses = " .. score.misses)
+	print("# of children = " .. bullets.numChildren)
+end
+
+-- makes then returns the bullet
+function newBullet( )
+	local b = addImage ( "butterfly.png", 100 / 3, 89 / 3, -- adds bullet
+			canon.x, canon.y - canon.height + 40, canon.rotation, bullets )
+	return b
 end
 
 -- runs whenever screen is tapped, it moves the elefant and fires a bullet from it's trunk
@@ -90,12 +102,10 @@ function fire( event )
 	end
 
 	-- move canon
-	transition.to(canon, { x = event.x, time = 300})
+	transition.to(canon, { x = event.x, time = 500})
 
-	-- fire bullet
-	local b = addImage ( "butterfly.png", 100 / 3, 89 / 3, -- adds bullet
-			canon.x, canon.y - canon.height + 40, canon.rotation, bullets )
-	transition.to(b, {x = canon.x, y = canon.y - HEIGHT - 50, time = 2000, onComplete = bulletMiss}) -- moves bullet
+	-- fire bullet 
+	transition.to(newBullet(), {x = canon.x, y =  canon.y - HEIGHT - 50, time = 2000, onComplete = bulletMiss}) -- moves bullet
 
 	-- put canon on top
 	canon:toFront( )
@@ -108,7 +118,7 @@ end
 
 -- checks for collisions
 function testForHits(  )
-	print(bullets.numChildren)
+	--print(bullets.numChildren)
 end
 
 -- ██╗███╗   ██╗██╗████████╗ ██████╗  █████╗ ███╗   ███╗███████╗
