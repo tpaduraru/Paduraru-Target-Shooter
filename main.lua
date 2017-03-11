@@ -66,16 +66,14 @@ function fire( event )
 	if event.phase ~= "began" then
 		return nil
 	end
-	
-	-- calculate canon angle
-	local dest = {}
-	dest.y = HEIGHT
-	dest.x = (canon.x - event.x) / math.abs( dest.y - event.y ) * HEIGHT
-	canon.rotation = -math.deg( math.atan( dest.x / dest.y ) )
+
+	-- move canon
+	transition.to(canon, { x = event.x, time = 300})
 
 	-- fire bullet
-	local b = addImage ( "butterfly.png", 100 / 3, 89 / 3, xCenter, canon.y, canon.rotation, bullets )
-	transition.to(b, {x = event.x, y = event.y, time = 2000})
+	local b = addImage ( "butterfly.png", 100 / 3, 89 / 3, -- adds bullet
+			canon.x, canon.y - canon.height + 40, canon.rotation, bullets )
+	transition.to(b, {x = canon.x, y = canon.y - HEIGHT - 50, time = 2000}) -- moves bullet
 
 	-- put canon on top
 	canon:toFront( )
