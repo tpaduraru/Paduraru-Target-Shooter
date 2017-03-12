@@ -36,9 +36,9 @@ local canon
 -- groups
 local bullets = display.newGroup()
 local targets = {}
---targets.russian = { "russian-hat.png" }
--- targets.german = 
--- targets.runescape = 
+targets.russian = { "russian-hat.png", 500 / 5.5, 500 / 5.5, 4, -13, 3 }
+targets.german = { "german-hat.png", 2400 / 26, 1478 / 26, 4, -40, 5 }
+targets.runescape = {"rs-hat.png", 400 / 9, 400 / 9, 4, -45, 5}
                   
 -- ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
 -- ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
@@ -82,15 +82,10 @@ function drawImages( ... )
 	canon.anchorY = 0.75
 end
 
--- whenever the bullet goes off the screen, delete itself and update the score.
+-- whenever the bullet goes off the screen
 function bulletMiss( obj )
 	obj:removeSelf( ) -- deletes image
-	--bullets[1]:removeSelf( ) -- deletes bullet from group
-	--obj = nil
-
-	score.update(-1)
-	--print("bullet removed + # of misses = " .. score.misses)
-	--print("# of children = " .. bullets.numChildren)
+	score.update(-1) -- adds one miss to score
 end
 
 -- makes then returns the bullet
@@ -110,25 +105,24 @@ function fire( event )
 	-- move canon
 	transition.to(canon, { x = event.x, time = 500})
 
-	b = newBullet()
 	-- fire bullet 
-	transition.to(b, {x = canon.x, y =  canon.y - HEIGHT - 50, time = 2000, onComplete = bulletMiss}) -- moves bullet
+	transition.to(newBullet(), {x = canon.x, y =  canon.y - HEIGHT - 50, time = 2000, onComplete = bulletMiss}) -- moves bullet
 
 	-- put canon on top
 	canon:toFront()
 end
 
--- function newTarget(  )
--- 	local t = display.newGroup() -- new display group for the target
--- 	--local r = math.random( 1, 3 ) -- random one of three targets possible
+function newTarget(  )
+	local t = display.newGroup() -- new display group for the target
+	e = targets.runescape
 
--- 	t.x, t.y = xCenter,yCenter
+	t.x, t.y = xCenter,yCenter
 
--- 	addImage( "putin.png", 320 / 5, 396 / 5, 0, 0, 0, t)
--- 	addImage("russian-hat.png", 500 / 7, 500 / 7, 0, -22, 0, t)
+	addImage( "putin.png", 320 / 5, 396 / 5, 0, 0, 0, t)
+	addImage(e[1], e[2], e[3], e[4], e[5], e[6], t)
 
--- 	return t
--- end
+	return t
+end
 
 -- function addTarget(  )
 -- 	if math.random( 0, 300 ) <= 10 then
