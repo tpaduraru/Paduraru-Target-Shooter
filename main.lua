@@ -39,6 +39,7 @@ local targets = {}
 targets.russian = { "russian-hat.png", 500 / 5.5, 500 / 5.5, 4, -13, 3 }
 targets.german = { "german-hat.png", 2400 / 26, 1478 / 26, 4, -40, 5 }
 targets.runescape = {"rs-hat.png", 400 / 9, 400 / 9, 4, -45, 5}
+targets.types = { "russian", "german", "runescape" }
                   
 -- ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
 -- ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
@@ -112,34 +113,45 @@ function fire( event )
 	canon:toFront()
 end
 
-function newTarget(  )
+function newTarget( typ )
 	local t = display.newGroup() -- new display group for the target
-	e = targets.runescape
-
 	t.x, t.y = xCenter,yCenter
 
-	addImage( "putin.png", 320 / 5, 396 / 5, 0, 0, 0, t)
-	addImage(e[1], e[2], e[3], e[4], e[5], e[6], t)
+	spr = targets[ tostring(targets.types[typ]) ]
+
+	addImage( "putin.png", 320 / 5, 396 / 5, 400, math.random( yMin, yMax - canon.height ), 0, t)
+	addImage( spr[1], spr[2], spr[3], spr[4], spr[5], spr[6], t)
 
 	return t
 end
 
--- function addTarget(  )
--- 	if math.random( 0, 300 ) <= 10 then
--- 		--addImage( targets.russian[1], 320 / 5, 396 / 5, xCenter, yCenter, 0, targets)
--- 		newTarget()
--- 	end
--- end
+function addTarget(  )
+	if math.random( 0, 300 ) <= 10 then
+		newTarget(math.random( 1,3 ))
+	end
+end
+
+function moveTargets(  )
+	if targets.numChildren == nil or 0 then
+		return 1
+	end
+
+	for i = 1, targets.numChildren do
+		targets[i].x = targets[i].x - 1
+		targets[i].rotation = targets[i].rotation + 1
+	end
+end
 
 -- checks for collisions
 function testForHits(  )
-	print(bullets.numChildren)
+	print(targets.numChildren)
 end
 
 -- -- runs whenever a new frame is drawn
 function enterFrame( event )
 	testForHits()
-	--addTarget()
+	addTarget()
+	moveTargets()
 end
 
 -- ██╗███╗   ██╗██╗████████╗ ██████╗  █████╗ ███╗   ███╗███████╗
