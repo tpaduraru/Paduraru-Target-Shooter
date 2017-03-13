@@ -142,7 +142,7 @@ function positionTarget( t, type )
 		t.y = math.random( yMin * 100, yMax - 500 )
 
 		transition.to(t, {y = yMax + math.random(100, 400), rotation = math.random(360, 1000), 
-				time = math.random(10000, 35000), onComplete = targetDone})
+				time = math.random(20000, 40000), onComplete = targetDone})
 
 	end
 end
@@ -177,8 +177,10 @@ end
 
 -- -- runs whenever a new frame is drawn
 function enterFrame( event )
-	newTarget()
-	--moveTargets()
+	local n = math.random( 1, 1000 )
+	if n <= 10 then
+		newTarget()
+	end
 end
 
 -- ██╗███╗   ██╗██╗████████╗ ██████╗  █████╗ ███╗   ███╗███████╗
