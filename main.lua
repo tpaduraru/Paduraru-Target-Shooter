@@ -86,12 +86,11 @@ end
 -- whenever the bullet goes off the screen
 function bulletMiss( obj )
 	obj:removeSelf( ) -- deletes image
-	score.update(-1) -- adds one miss to score
 end
 
 function targetDone( t )
 	t:removeSelf( )
-	print( targets.numChildren )
+	score.update(-1) -- adds one miss to sco
 end
 
 -- makes then returns the bullet
@@ -120,23 +119,46 @@ end
 
 function positionTarget( t, type )
 	-- positions target off screen randomly
-	t.x, t.y = math.random( t[1].width + xMax, t[1].width + xMax + 400), math.random( yMin, yMax - canon.height )
 
-	transition.to(t, {x = xMin - math.random(100, 400), rotation = math.random(360, 6000), 
-			time = math.random(2000, 3500), onComplete = targetDone})
+	if type == 1 then -- if russian
+
+		t.x = math.random( t[1].width + xMax, t[1].width + xMax + 400)
+		t.y = math.random( yMin, yMax - canon.height )
+
+		transition.to(t, {x = xMin - math.random(100, 400), rotation = math.random(360, 1000), 
+				time = math.random(10000, 35000), onComplete = targetDone})
+
+	elseif type == 2 then -- if german
+
+		t.x = math.random( xMin - t[1].width - 400, xMin - t[1].width )
+		t.y = math.random( yMin, yMax - canon.height )
+
+		transition.to(t, {x = xMax + math.random(100, 400), rotation = math.random(-1000, -300), 
+				time = math.random(20000, 35000), onComplete = targetDone})
+
+	elseif type == 3 then -- if runescape
+
+		t.x = math.random( xMin, xMax)
+		t.y = math.random( yMin * 100, yMax - 500 )
+
+		transition.to(t, {y = yMax + math.random(100, 400), rotation = math.random(360, 1000), 
+				time = math.random(10000, 35000), onComplete = targetDone})
+
+	end
 end
 
 function newTarget(  )
 	local t = display.newGroup() -- new display group for the target
+	local type = math.random(1,3)
 
-	spr = targets[ tostring(targets.types[math.random(1,3)]) ] -- creates a target of a random class
+	spr = targets[ tostring(targets.types[type]) ] -- creates a target of a random class
 
 	addImage( "putin.png", 320 / 5, 396 / 5, 0, 0, 0, t)
 	addImage( spr[1], spr[2], spr[3], spr[4], spr[5], spr[6], t)
 
 	targets:insert( t )
 
-	positionTarget(t)
+	positionTarget(t, type)
 end
 
 function moveTargets(  )
