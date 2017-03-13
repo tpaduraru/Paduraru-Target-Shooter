@@ -84,7 +84,7 @@ function drawImages( ... )
 end
 
 -- whenever the bullet goes off the screen
-function bulletMiss( obj )
+function removeObj( obj )
 	obj:removeSelf( ) -- deletes image
 end
 
@@ -111,7 +111,7 @@ function fire( event )
 	transition.to(canon, { x = event.x, time = 500})
 
 	-- fire bullet 
-	transition.to(newBullet(), {x = canon.x, y =  canon.y - HEIGHT - 50, time = 2000, onComplete = bulletMiss}) -- moves bullet
+	transition.to(newBullet(), {x = canon.x, y =  canon.y - HEIGHT - 50, time = 2000, onComplete = removeObj}) -- moves bullet
 
 	-- put canon on top
 	canon:toFront()
@@ -173,6 +173,9 @@ end
 function hit( t, b )
 	transition.cancel(t)
 	transition.cancel(b)
+
+	e = addImage("explosion.png", 200 / 4, 211 / 4, t.x, t.y, 0, nil)
+	transition.to(e, {xScale = 2, yScale = 2, alpha = 0, onComplete = removeObj})
 
 	t:removeSelf( )
 	b:removeSelf( )
