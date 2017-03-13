@@ -126,7 +126,7 @@ function positionTarget( t, type )
 		t.y = math.random( yMin, yMax - canon.height )
 
 		transition.to(t, {x = xMin - math.random(100, 400), rotation = math.random(360, 1000), 
-				time = math.random(10000, 35000), onComplete = targetDone})
+				time = math.random(5000, 10000), onComplete = targetDone})
 
 	elseif type == 2 then -- if german
 
@@ -134,7 +134,7 @@ function positionTarget( t, type )
 		t.y = math.random( yMin, yMax - canon.height )
 
 		transition.to(t, {x = xMax + math.random(100, 400), rotation = math.random(-1000, -300), 
-				time = math.random(20000, 35000), onComplete = targetDone})
+				time = math.random(5000, 10000), onComplete = targetDone})
 
 	elseif type == 3 then -- if runescape
 
@@ -142,7 +142,7 @@ function positionTarget( t, type )
 		t.y = math.random( yMin - 100, yMax - 500 )
 
 		transition.to(t, {y = yMax + math.random(100, 400), rotation = math.random(360, 1000), 
-				time = math.random(20000, 40000), onComplete = targetDone})
+				time = math.random(2000, 4000), onComplete = targetDone})
 
 	end
 end
@@ -170,15 +170,24 @@ function moveTargets(  )
 	end
 end
 
+function hit( t, b )
+	transition.cancel(t)
+	transition.cancel(b)
+
+	t:removeSelf( )
+	b:removeSelf( )
+
+	score.update(1)
+end
+
 -- checks for collisions
 function testForHits(  )
-	print (targets.numChildren)
-
 	for i = 1, targets.numChildren do
 		for j = 1, bullets.numChildren do
 			if math.abs(targets[i].x - bullets[j].x) <= (targets[i].width / 2)  + (bullets[j].width / 2)  and
 				math.abs(targets[i].y - bullets[j].y) <= (targets[i].width / 2)  + (bullets[j].height / 2) then
-				print( "HIT" )
+				hit( targets[i], bullets[j] )
+				return true
 			end
 		end
 	end
@@ -187,7 +196,7 @@ end
 -- -- runs whenever a new frame is drawn
 function enterFrame( event )
 	local n = math.random( 1, 1000 )
-	if n <= 15 then
+	if n <= 30 then
 		newTarget()
 	end
 	testForHits()
