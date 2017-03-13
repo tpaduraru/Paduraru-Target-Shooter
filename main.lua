@@ -35,7 +35,7 @@ local canon
 
 -- groups
 local bullets = display.newGroup()
-local targets = {}
+local targets = display.newGroup()
 targets.russian = { "russian-hat.png", 500 / 5.5, 500 / 5.5, 4, -13, 3 }
 targets.german = { "german-hat.png", 2400 / 26, 1478 / 26, 4, -40, 5 }
 targets.runescape = {"rs-hat.png", 400 / 9, 400 / 9, 4, -45, 5}
@@ -89,6 +89,11 @@ function bulletMiss( obj )
 	score.update(-1) -- adds one miss to score
 end
 
+function targetDone( t )
+	t:removeSelf( )
+	print( targets.numChildren )
+end
+
 -- makes then returns the bullet
 function newBullet( )
 	local b = addImage( "butterfly.png", 100 / 3, 89 / 3, canon.x, canon.y - canon.height + 40, canon.rotation, bullets )
@@ -113,32 +118,33 @@ function fire( event )
 	canon:toFront()
 end
 
-function newTarget( typ )
-	local t = display.newGroup() -- new display group for the target
-	t.x, t.y = xCenter,yCenter
+function positionTarget( t, type )
+	-- positions target off screen randomly
+	t.x, t.y = math.random( t[1].width + xMax, t[1].width + xMax + 400), math.random( yMin, yMax - canon.height )
 
-	spr = targets[ tostring(targets.types[typ]) ]
-
-	addImage( "putin.png", 320 / 5, 396 / 5, 400, math.random( yMin, yMax - canon.height ), 0, t)
-	addImage( spr[1], spr[2], spr[3], spr[4], spr[5], spr[6], t)
-
-	return t
+	transition.to(t, {x = xMin - math.random(100, 400), rotation = math.random(360, 6000), 
+			time = math.random(2000, 3500), onComplete = targetDone})
 end
 
-function addTarget(  )
-	if math.random( 0, 300 ) <= 10 then
-		newTarget(math.random( 1,3 ))
-	end
+function newTarget(  )
+	local t = display.newGroup() -- new display group for the target
+
+	spr = targets[ tostring(targets.types[math.random(1,3)]) ] -- creates a target of a random class
+
+	addImage( "putin.png", 320 / 5, 396 / 5, 0, 0, 0, t)
+	addImage( spr[1], spr[2], spr[3], spr[4], spr[5], spr[6], t)
+
+	targets:insert( t )
+
+	positionTarget(t)
 end
 
 function moveTargets(  )
-	if targets.numChildren == nil or 0 then
-		return 1
-	end
-
 	for i = 1, targets.numChildren do
-		targets[i].x = targets[i].x - 1
-		targets[i].rotation = targets[i].rotation + 1
+		if targets[i] ~= nil then
+			targets[i].x = targets[i].x - 10
+			targets[i].rotation = targets[i].rotation + 1
+		end
 	end
 end
 
@@ -149,9 +155,8 @@ end
 
 -- -- runs whenever a new frame is drawn
 function enterFrame( event )
-	testForHits()
-	addTarget()
-	moveTargets()
+	newTarget()
+	--moveTargets()
 end
 
 -- ██╗███╗   ██╗██╗████████╗ ██████╗  █████╗ ███╗   ███╗███████╗
