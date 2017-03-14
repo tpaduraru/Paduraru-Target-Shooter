@@ -26,8 +26,6 @@ local yCenter = (yMin + yMax) / 2
 local score = {}
 score.hits = 0
 score.misses = 0
-score.percent = math.floor(score.hits / (score.hits + score.misses))
-score.text = "Hits: " .. score.hits .. "Misses: " .. score.misses .. "Percent Hit: " .. score.percent
 
 -- image objects
 local bg
@@ -51,19 +49,21 @@ targets.types = { "russian", "german", "runescape" }
 -- refreshes game score depending on value passed into it.
 score.update = function(value)
 	if value == 1 then
-
+		score.hits = score.hits + 1
 	elseif value == -1 then
 		score.misses = score.misses + 1
 	end
 
+	-- updates score text
 	score.percent = math.floor(score.hits / (score.hits + score.misses))
-	score.text = "Hits: " .. score.hits .. "Misses: " .. score.misses .. "Percent Hit: " .. score.percent
+	score.text.text = "Hits: " .. score.hits .. ", Misses: " .. score.misses .. ", Percent Hit: " .. math.floor( 100 * score.hits / (score.hits + score.misses)) .. "%"
 end
 
 -- utility function to help add objects in one line
 function addImage( file, width, height, x, y, r, group )
 	local img
 
+	--checks if the user wants to add a group or not.
 	if group ~= nil then
 		img = display.newImageRect( group, file, width, height )
 	else
@@ -77,10 +77,18 @@ end
 
 -- creates all image objects
 function drawImages( ... )
+	-- background image
 	bg = addImage( "bg.jpg", 1920, 1080, xCenter, yCenter, 0, nil)
 	bg:toBack( )
+
+	-- canon
 	canon = addImage("elefun.png", 70, 145, xCenter, yMax, 0, nil)
 	canon.anchorY = 0.75
+
+	-- score
+	score.text = display.newText( "Hits: " .. score.hits .. ", Misses: " .. score.misses .. ", Percent Hit: " .. "100%",
+			xCenter, yMin + 30, native.systemFontBold, 15 )
+	score.text:toFront( )
 end
 
 -- whenever the bullet goes off the screen
@@ -88,6 +96,7 @@ function removeObj( obj )
 	obj:removeSelf( ) -- deletes image
 end
 
+-- once the target transition is done, it deletes the object
 function targetDone( t )
 	t:removeSelf( )
 	score.update(-1) -- adds one miss to sco
@@ -117,8 +126,8 @@ function fire( event )
 	canon:toFront()
 end
 
+-- positions target off screen randomly
 function positionTarget( t, type )
-	-- positions target off screen randomly
 
 	if type == 1 then -- if russian
 
@@ -147,6 +156,7 @@ function positionTarget( t, type )
 	end
 end
 
+-- creates the new target with different hats
 function newTarget(  )
 	local t = display.newGroup() -- new display group for the target
 	local type = math.random(1,3)
@@ -161,47 +171,48 @@ function newTarget(  )
 	positionTarget(t, type)
 end
 
-function moveTargets(  )
-	for i = 1, targets.numChildren do
-		if targets[i] ~= nil then
-			targets[i].x = targets[i].x - 10
-			targets[i].rotation = targets[i].rotation + 1
-		end
-	end
-end
-
+-- once bulllet hits target
 function hit( t, b )
+	-- stops both of the transitions
 	transition.cancel(t)
 	transition.cancel(b)
 
+	-- shows an explosion that grows and fades out
 	e = addImage("explosion.png", 200 / 4, 211 / 4, t.x, t.y, 0, nil)
 	transition.to(e, {xScale = 2, yScale = 2, alpha = 0, onComplete = removeObj})
 
+	-- remove those objects
 	t:removeSelf( )
 	b:removeSelf( )
 
+	-- adds one hit
 	score.update(1)
 end
 
 -- checks for collisions
 function testForHits(  )
-	for i = 1, targets.numChildren do
-		for j = 1, bullets.numChildren do
+	for i = 1, targets.numChildren do -- for every target
+		for j = 1, bullets.numChildren do -- for every bullets
+
 			if math.abs(targets[i].x - bullets[j].x) <= (targets[i].width / 2)  + (bullets[j].width / 2)  and
 				math.abs(targets[i].y - bullets[j].y) <= (targets[i].width / 2)  + (bullets[j].height / 2) then
 				hit( targets[i], bullets[j] )
 				return true
 			end
+
 		end
 	end
 end
 
 -- -- runs whenever a new frame is drawn
 function enterFrame( event )
-	local n = math.random( 1, 1000 )
-	if n <= 30 then
+
+	-- 30 in 1000 chance to create a new target (3%)
+	if math.random( 1, 1000 ) <= 30 then
 		newTarget()
 	end
+
+	-- tests for bullet and target collisions
 	testForHits()
 end
 
@@ -224,4 +235,5 @@ function initGame()
 	Runtime:addEventListener( "enterFrame", enterFrame)
 end
 
+-- starts the game
 initGame()
