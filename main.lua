@@ -132,12 +132,18 @@ end
 -- positions target off screen randomly
 function positionTarget( target, type )
 
+	-- retrieves the target type
 	local t = targets[targets.types[type]]
 
+	-- where the target starts
 	target.x = math.random( targets.originMinX, targets.originMaxX ) 
 	target.y = math.random( targets.originMinY, targets.originMaxY )
+
+	-- the targets explosion animation
 	target.explosion = t.explosion
 
+	-- moves the target to random x,y with random rotation and random speed.
+	-- uses target specific easing and alpha destinations
 	transition.to(target, {
 			x = math.random(targets.destMinX, targets.destMaxX), 
 			y = math.random(targets.destMinY, targets.destMaxY),
@@ -152,7 +158,7 @@ end
 
 -- definitions for target transitions
 function initTargets()
-	-- general definitions
+	-- general definitions (each has a min and max for use in the random function)
 	targets.timeMin = 2000
 	targets.timeMax = 5000
 	targets.rotationMin = 180
@@ -189,11 +195,15 @@ function newTarget(  )
 
 	spr = targets[ tostring(targets.types[type]) ] -- creates a target of a random class
 
+	-- makes a putin head
 	addImage( "putin.png", 320 / 5, 396 / 5, 0, 0, 0, t)
+	-- places hat on putin
 	addImage( spr[1], spr[2], spr[3], spr[4], spr[5], spr[6], t)
 
+	-- adds target to targets group
 	targets:insert( t )
 
+	-- sets target in motion
 	positionTarget(t, type)
 end
 
