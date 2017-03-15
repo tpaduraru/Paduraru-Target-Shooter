@@ -29,15 +29,18 @@ score.misses = 0
 
 -- image objects
 local bg
-local canon 
+local canon
 
 -- groups
 local bullets = display.newGroup()
 local targets = display.newGroup()
+
+-- Definitions for target images
 targets.russian = { "russian-hat.png", 500 / 5.5, 500 / 5.5, 4, -13, 3 }
 targets.german = { "german-hat.png", 2400 / 26, 1478 / 26, 4, -40, 5 }
 targets.runescape = {"rs-hat.png", 400 / 9, 400 / 9, 4, -45, 5}
 targets.types = { "russian", "german", "runescape" }
+
                   
 -- ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
 -- ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
@@ -135,13 +138,13 @@ function positionTarget( target, type )
 	target.y = math.random( t.originMinY, t.originMaxY )
 
 	transition.to(target, {
-			x = math.random(targets.destMinX, targets.destMaxX), 
-			y = math.random(targets.destMinY, targets.destMaxY),
-			alpha = t.destAlpha,
+			x = math.random(t.destMinX, t.destMaxX), 
+			y = math.random(t.destMinY, t.destMaxY),
 			rotation = math.random(targets.rotationMin, targets.rotationMax), 
 			time = math.random(targets.timeMin, targets.timeMax), 
 			onComplete = targetDone
 			})
+
 end
 
 -- definitions for target transitions
@@ -151,29 +154,36 @@ function initTargets()
 	targets.timeMax = 8000
 	targets.rotationMin = 180
 	targets.rotationMax = 1800
-	targets.destMinX = xMin - 400 
-	targets.destMaxX = xMin - 100
-	targets.originMinX = 320 / 5 + xMax
-	targets.originMaxX = 320 / 5 + xMax + 50
-	targets.destMinY = yMin
-	targets.destMaxY = yMax - canon.height
-	targets.originMinY = yMin
-	targets.originMaxY = yMax - canon.height
 
 	-- russian definitions
-	targets.russian.destAlpha = 1 
-	targets.russian.destMaxX = xMin - 100 
+	targets.russian.destMinX = xMin - 400 
+	targets.russian.destMaxX = xMin - 100
 	targets.russian.originMinX = 320 / 5 + xMax
+	targets.russian.originMaxX = 320 / 5 + xMax + 50
+	targets.russian.destMinY = yMin
+	targets.russian.destMaxY = yMin
+	targets.russian.originMinY = yMax - canon.height
+	targets.russian.originMaxY = targets.russian.originMinY	
 
 	-- german definitions
-	targets.german.destAlpha = 1
+	targets.german.destMinX = xMax + 100 
 	targets.german.destMaxX = xMax + 400
 	targets.german.originMinX = xMin - 320 / 5 - 50
+	targets.german.originMaxX = xMin - 320 / 5 
+	targets.german.destMinY = yMin
+	targets.german.destMaxY = yMin
+	targets.german.originMinY = yMax - canon.height
+	targets.german.originMaxY = targets.german.originMinY
 
 	-- runescape definitions
-	targets.runescape.destAlpha = 0 
+	targets.runescape.destMinX = xMax + 100 
 	targets.runescape.destMaxX = xMax + 400
 	targets.runescape.originMinX = xMin - 320 / 5 - 50
+	targets.runescape.originMaxX = xMin - 320 / 5 
+	targets.runescape.destMinY = yMin
+	targets.runescape.destMaxY = yMax - canon.height
+	targets.runescape.originMinY = yMin
+	targets.runescape.originMaxY = yMax - canon.height
 end
 
 -- creates the new target with different hats
@@ -202,9 +212,9 @@ function hit( t, b )
 	transition.to(e, {xScale = 2, yScale = 2, alpha = 0, onComplete = removeObj})
 
 	-- remove those objects
-	t:removeSelf( ) 
+	t:removeSelf( )
 	b:removeSelf( )
- 
+
 	-- adds one hit
 	score.update(1)
 end
@@ -249,6 +259,9 @@ function initGame()
 
 	-- draw display objects
 	drawImages()
+
+	-- inits the target variables
+	initTargets()
 
 	-- event listeners
 	Runtime:addEventListener( "touch", fire )
