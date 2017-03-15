@@ -133,13 +133,15 @@ end
 function positionTarget( target, type )
 
 	local t = targets[targets.types[type]]
-	print( targets.types[type] )
-	target.x = math.random( t.originMinX, t.originMaxX ) 
-	target.y = math.random( t.originMinY, t.originMaxY )
+
+	target.x = math.random( targets.originMinX, targets.originMaxX ) 
+	target.y = math.random( targets.originMinY, targets.originMaxY )
 
 	transition.to(target, {
-			x = math.random(t.destMinX, t.destMaxX), 
-			y = math.random(t.destMinY, t.destMaxY),
+			x = math.random(targets.destMinX, targets.destMaxX), 
+			y = math.random(targets.destMinY, targets.destMaxY),
+			easing = t.easing,
+			alpha = t.alpha,
 			rotation = math.random(targets.rotationMin, targets.rotationMax), 
 			time = math.random(targets.timeMin, targets.timeMax), 
 			onComplete = targetDone
@@ -150,40 +152,30 @@ end
 -- definitions for target transitions
 function initTargets()
 	-- general definitions
-	targets.timeMin = 5000
-	targets.timeMax = 8000
+	targets.timeMin = 2000
+	targets.timeMax = 5000
 	targets.rotationMin = 180
 	targets.rotationMax = 1800
+	targets.destMinX = xMin - 400 
+	targets.destMaxX = xMin - 100
+	targets.originMinX = 320 / 5 + xMax
+	targets.originMaxX = 320 / 5 + xMax + 50
+	targets.destMinY = yMin
+	targets.destMaxY = yMax - canon.height
+	targets.originMinY = yMin
+	targets.originMaxY = yMax - canon.height
 
 	-- russian definitions
-	targets.russian.destMinX = xMin - 400 
-	targets.russian.destMaxX = xMin - 100
-	targets.russian.originMinX = 320 / 5 + xMax
-	targets.russian.originMaxX = 320 / 5 + xMax + 50
-	targets.russian.destMinY = yMin
-	targets.russian.destMaxY = yMin
-	targets.russian.originMinY = yMax - canon.height
-	targets.russian.originMaxY = targets.russian.originMinY	
+	targets.russian.alpha = 1
+	targets.russian.easing = easing.linear
 
 	-- german definitions
-	targets.german.destMinX = xMax + 100 
-	targets.german.destMaxX = xMax + 400
-	targets.german.originMinX = xMin - 320 / 5 - 50
-	targets.german.originMaxX = xMin - 320 / 5 
-	targets.german.destMinY = yMin
-	targets.german.destMaxY = yMin
-	targets.german.originMinY = yMax - canon.height
-	targets.german.originMaxY = targets.german.originMinY
+	targets.german.alpha = 0.5
+	targets.german.easing = easing.outBack
 
 	-- runescape definitions
-	targets.runescape.destMinX = xMax + 100 
-	targets.runescape.destMaxX = xMax + 400
-	targets.runescape.originMinX = xMin - 320 / 5 - 50
-	targets.runescape.originMaxX = xMin - 320 / 5 
-	targets.runescape.destMinY = yMin
-	targets.runescape.destMaxY = yMax - canon.height
-	targets.runescape.originMinY = yMin
-	targets.runescape.originMaxY = yMax - canon.height
+	targets.runescape.alpha = 0
+	targets.runescape.easing = easing.outElastic
 end
 
 -- creates the new target with different hats
