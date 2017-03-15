@@ -136,6 +136,7 @@ function positionTarget( target, type )
 
 	target.x = math.random( targets.originMinX, targets.originMaxX ) 
 	target.y = math.random( targets.originMinY, targets.originMaxY )
+	target.explosion = t.explosion
 
 	transition.to(target, {
 			x = math.random(targets.destMinX, targets.destMaxX), 
@@ -168,14 +169,17 @@ function initTargets()
 	-- russian definitions
 	targets.russian.alpha = 1
 	targets.russian.easing = easing.linear
+	targets.russian.explosion = "explosion1.png"
 
 	-- german definitions
 	targets.german.alpha = 0.5
 	targets.german.easing = easing.outBack
+	targets.german.explosion = "explosion2.png"
 
 	-- runescape definitions
 	targets.runescape.alpha = 0
 	targets.runescape.easing = easing.outElastic
+	targets.runescape.explosion = "explosion3.png"
 end
 
 -- creates the new target with different hats
@@ -200,7 +204,7 @@ function hit( t, b )
 	transition.cancel(b)
 
 	-- shows an explosion that grows and fades out
-	e = addImage("explosion.png", 200 / 4, 211 / 4, t.x, t.y, 0, nil)
+	e = addImage(t.explosion, 50, 50, t.x, t.y, 0, nil)
 	transition.to(e, {xScale = 2, yScale = 2, alpha = 0, onComplete = removeObj})
 
 	-- remove those objects
