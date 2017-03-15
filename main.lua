@@ -34,13 +34,10 @@ local canon
 -- groups
 local bullets = display.newGroup()
 local targets = display.newGroup()
-
--- Definitions for target images
 targets.russian = { "russian-hat.png", 500 / 5.5, 500 / 5.5, 4, -13, 3 }
 targets.german = { "german-hat.png", 2400 / 26, 1478 / 26, 4, -40, 5 }
 targets.runescape = {"rs-hat.png", 400 / 9, 400 / 9, 4, -45, 5}
 targets.types = { "russian", "german", "runescape" }
-
                   
 -- ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
 -- ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
@@ -165,7 +162,7 @@ function initTargets()
 
 	-- russian definitions
 	targets.russian.destAlpha = 1 
-	targets.russian.destMaxX = xMin - 100
+	targets.russian.destMaxX = xMin - 100 
 	targets.russian.originMinX = 320 / 5 + xMax
 
 	-- german definitions
@@ -252,9 +249,6 @@ function initGame()
 
 	-- draw display objects
 	drawImages()
-
-	-- inits the target variables
-	initTargets()
 
 	-- event listeners
 	Runtime:addEventListener( "touch", fire )
