@@ -34,10 +34,13 @@ local canon
 -- groups
 local bullets = display.newGroup()
 local targets = display.newGroup()
+
+-- Definitions for target images
 targets.russian = { "russian-hat.png", 500 / 5.5, 500 / 5.5, 4, -13, 3 }
 targets.german = { "german-hat.png", 2400 / 26, 1478 / 26, 4, -40, 5 }
 targets.runescape = {"rs-hat.png", 400 / 9, 400 / 9, 4, -45, 5}
 targets.types = { "russian", "german", "runescape" }
+
                   
 -- ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗
 -- ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
@@ -127,33 +130,85 @@ function fire( event )
 end
 
 -- positions target off screen randomly
-function positionTarget( t, type )
+function positionTarget( target, type )
 
-	if type == 1 then -- if russian
+	local t = targets[targets.types[type]]
+	print( targets.types[type] )
+	target.x = math.random( t.originMinX, t.originMaxX ) 
+	target.y = math.random( t.originMinY, t.originMaxY )
 
-		t.x = math.random( t[1].width + xMax, t[1].width + xMax + 10)
-		t.y = math.random( yMin, yMax - canon.height )
+	transition.to(target, {
+			x = math.random(t.destMinX, t.destMaxX), 
+			y = math.random(t.destMinY, t.destMaxY),
+			rotation = math.random(targets.rotationMin, targets.rotationMax), 
+			time = math.random(targets.timeMin, targets.timeMax), 
+			onComplete = targetDone
+			})
 
-		transition.to(t, {x = xMin - math.random(100, 400), rotation = math.random(360, 1000), 
-				time = math.random(5000, 10000), onComplete = targetDone})
+	-- if type == 1 then -- if russian
 
-	elseif type == 2 then -- if german
+	-- 	t.x = math.random( t[1].width + xMax, t[1].width + xMax + 10 ) 
+	-- 	t.y = math.random( yMin, yMax - canon.height )
 
-		t.x = math.random( xMin - t[1].width - 10, xMin - t[1].width )
-		t.y = math.random( yMin, yMax - canon.height )
+	-- 	transition.to(t, {x = xMin - math.random(100, 400), rotation = math.random(360, 1000), 
+	-- 			time = math.random(5000, 10000), onComplete = targetDone})
 
-		transition.to(t, {x = xMax + math.random(100, 400), rotation = math.random(-1000, -300), 
-				time = math.random(5000, 10000), onComplete = targetDone})
+	-- elseif type == 2 then -- if german
 
-	elseif type == 3 then -- if runescape
+	-- 	t.x = math.random( xMin - t[1].width - 10, xMin - t[1].width )
+	-- 	t.y = math.random( yMin, yMax - canon.height )
 
-		t.x = math.random( xMin, xMax)
-		t.y = math.random( yMin - 100, yMax - 500 )
+	-- 	transition.to(t, {x = xMax + math.random(100, 400), rotation = math.random(-1000, -300), 
+	-- 			time = math.random(5000, 10000), onComplete = targetDone})
 
-		transition.to(t, {y = yMax + math.random(100, 400), rotation = math.random(360, 1000), 
-				time = math.random(2000, 4000), onComplete = targetDone})
+	-- elseif type == 3 then -- if runescape
 
-	end
+	-- 	t.x = math.random( xMin, xMax)
+	-- 	t.y = math.random( yMin - 100, yMax - 500 )
+
+	-- 	transition.to(t, {y = yMax + math.random(100, 400), rotation = math.random(360, 1000), 
+	-- 			time = math.random(2000, 4000), onComplete = targetDone})
+
+	-- end
+end
+
+-- definitions for target transitions
+function initTargets()
+	-- general definitions
+	targets.timeMin = 5000
+	targets.timeMax = 8000
+	targets.rotationMin = 180
+	targets.rotationMax = 1800
+
+	-- russian definitions
+	targets.russian.destMinX = xMin - 400 
+	targets.russian.destMaxX = xMin - 100
+	targets.russian.originMinX = 320 / 5 + xMax
+	targets.russian.originMaxX = 320 / 5 + xMax + 50
+	targets.russian.destMinY = yMin
+	targets.russian.destMaxY = yMin
+	targets.russian.originMinY = yMax - canon.height
+	targets.russian.originMaxY = targets.russian.originMinY	
+
+	-- german definitions
+	targets.german.destMinX = xMax + 100 
+	targets.german.destMaxX = xMax + 400
+	targets.german.originMinX = xMin - 320 / 5 - 50
+	targets.german.originMaxX = xMin - 320 / 5 
+	targets.german.destMinY = yMin
+	targets.german.destMaxY = yMin
+	targets.german.originMinY = yMax - canon.height
+	targets.german.originMaxY = targets.german.originMinY
+
+	-- runescape definitions
+	targets.runescape.destMinX = xMax + 100 
+	targets.runescape.destMaxX = xMax + 400
+	targets.runescape.originMinX = xMin - 320 / 5 - 50
+	targets.runescape.originMaxX = xMin - 320 / 5 
+	targets.runescape.destMinY = yMin
+	targets.runescape.destMaxY = yMax - canon.height
+	targets.runescape.originMinY = yMin
+	targets.runescape.originMaxY = yMax - canon.height
 end
 
 -- creates the new target with different hats
@@ -229,6 +284,9 @@ function initGame()
 
 	-- draw display objects
 	drawImages()
+
+	-- inits the target variables
+	initTargets()
 
 	-- event listeners
 	Runtime:addEventListener( "touch", fire )
